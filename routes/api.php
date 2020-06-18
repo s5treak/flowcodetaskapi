@@ -37,7 +37,7 @@ Route::get('/view/{id}', 'MovieController@show');
 
 Route::get('/editMovie/{id}', 'MovieController@edit');
 
-Route::post('/updateMovie/{id}', 'MovieController@update');
+Route::put('/updateMovie/{id}', 'MovieController@update');
 
 Route::delete('/deleteMovie/{id}', 'MovieController@destroy');
 
