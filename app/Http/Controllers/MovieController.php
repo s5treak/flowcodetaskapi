@@ -15,5 +15,24 @@ class MovieController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+   
+    public function index()
+    {
+        $movies = Movie::all()->toArray();
+
+        $msg = count($movies) > 0 ? $movies : 'No movie is available';
+
+        $status = count($movies) > 0 ? 200 : 404;
+    
+        return response()->json([
+
+            'message'=> $msg
+
+        ], $status);
+
+
+    }
  
+ 
+    
 }
