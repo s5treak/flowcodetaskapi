@@ -35,7 +35,7 @@ Route::post('/addMovie', 'MovieController@store');
 
 Route::get('/view/{id}', 'MovieController@show');
 
-Route::get('/editMovie/{id}', 'MovieController@edit');
+//Route::get('/editMovie/{id}', 'MovieController@edit');
 
 Route::put('/updateMovie/{id}', 'MovieController@update');
 
