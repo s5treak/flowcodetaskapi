@@ -187,5 +187,116 @@ class MovieController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function destroy($id)
+    {
+        $movie = Movie::find($id);
+
+        $msg = is_null($movie) ? 'Movie is not available' : $this->runDelete($movie);
+
+        $status = is_null($movie) ? 404 : 200;
+
+        return response()->json([
+          
+            'message' => $msg
+
+        ], $status);
+    }
+
+    public function search(Request $request){
+        
+        $title = $request->title;
+        
+        $searchResults =  Movie::where('title','LIKE','%'.$title.'%')->get()->toArray();
+
+        $msg = count($searchResults) > 0 ? $searchResults : 'Title is not available';
+
+        $status = count($searchResults) > 0 ? 200 : 404;
     
+        return response()->json([
+
+            'message'=> $msg
+
+        ], $status);
+
+
+    }
+
+
+    public function rules($type){
+        
+        if($type == 'update'){
+            
+            //if type == update cover image may not be not required
+            return [
+                'title' => 'required|string',
+                'country_of_production'=> 'required',
+                'description'=> 'required|string',
+                'genre' => 'required',
+                //'main_video'=> 'required|mimes:mp4|max:10000',
+                'cover'=> 'file|mimes:jpeg,png,jpg|max:1024',
+            ];
+
+        }else{
+            
+            return [
+                'title' => 'required|string',
+                'country_of_production'=> 'required',
+                'description'=> 'required|string',
+                'genre' => 'required',
+                //'main_video'=> 'required|mimes:mp4|max:10000',
+                'cover'=> 'required|file|mimes:jpeg,png,jpg|max:1024',
+            ];
+
+        }
+    
+    }
+
+    public function errors(){
+         
+        return [
+            'title.required' => 'The Title field is required',
+            'country_of_production.required'=> 'The country field is required',
+            'description.required'=> 'The description field is required',
+            'genre.required' => 'The genre is required',
+            //'main_video'=> 'required|mimes:mp4|max:10000',
+            'cover.required'=> 'The cover image is required',
+            'cover.max' => 'The maximum file size is 1MB',
+            'cover.mimes' =>'Only jpeg,png,jpg is allowed'
+        ];
+
+    }
+
+    public function runDelete($para){
+
+        $para->delete();
+
+        return 'Movie has been deleted';
+
+        
+    }
+
+    public function upload_picture($pics){
+
+        $fileWithExt = $pics->getClientOriginalExtension();
+        $fileNameToStore = uniqid().uniqid().".".$fileWithExt;
+        $pics->storeAs('public/cover',  $fileNameToStore);
+
+        return $fileNameToStore;
+
+    }
+
+    
+    public function delete_picture($file) {
+
+        if (file_exists(storage_path('app/cover/'.$file))) {
+            
+            \Storage::delete($file);
+            // 2. possibility
+            unlink(storage_path('app/cover/'.$file));
+
+        }   
+
+        return true;
+
+    }
 }
